@@ -36,7 +36,8 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
             "query": query,
             "full_uri": req.uri().to_string(),
             "extraction_method": "path_analysis"
-        }
+        },
+        "usage": "To calculate Fibonacci of a different number, use: /api/main.rs?n=20 (replace 20 with your desired number(integer))"
     });
 
     Ok(Response::builder()
