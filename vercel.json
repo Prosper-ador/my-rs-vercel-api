@@ -1,13 +1,7 @@
 {
   "functions": {
-    "api/main.rs": {
+    "api/[n].rs": {
       "runtime": "vercel-rust@4.0.2"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/main.rs"
-    }
-  ]
+  }
 }
