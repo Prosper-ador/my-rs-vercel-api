@@ -694,6 +694,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "num-bigint",
+ "num-traits",
  "serde_json",
  "tokio",
  "vercel_runtime",

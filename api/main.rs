@@ -10,12 +10,16 @@ async fn main() -> Result<(), Error> {
 pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
     // Parse the request path to get the Fibonacci number
     let path = req.uri().path();
-    let segments: Vec<&str> = path.split('/').collect();
+    let query = req.uri().query().unwrap_or("");
     
-    // Default to Fibonacci(10) if no number provided
-    let n: u64 = segments.last()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(10);
+    println!("Full URI: {}", req.uri());
+    println!("Path: {}", path);
+    println!("Query: {}", query);
+    
+    // Try multiple ways to extract the number
+    let n: u64 = extract_fibonacci_number(path, query);
+    
+    println!("Extracted number: {}", n);
     
     // Limit to prevent excessive computation
     let n = n.min(100);
@@ -26,7 +30,13 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
         "fibonacci": fibonacci_result.to_string(),
         "n": n,
         "timestamp": chrono::Utc::now().to_rfc3339(),
-        "status": "success"
+        "status": "success",
+        "debug": {
+            "path": path,
+            "query": query,
+            "full_uri": req.uri().to_string(),
+            "extraction_method": "path_analysis"
+        }
     });
 
     Ok(Response::builder()
@@ -36,6 +46,46 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
         .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         .header("Access-Control-Allow-Headers", "Content-Type")
         .body(response_body.to_string().into())?)
+}
+
+fn extract_fibonacci_number(path: &str, query: &str) -> u64 {
+    // Method 1: Try query parameter first (most reliable)
+    if !query.is_empty() {
+        let params: Vec<&str> = query.split('&').collect();
+        for param in params {
+            if param.starts_with("n=") {
+                if let Ok(num) = param[2..].parse::<u64>() {
+                    println!("Found number in query: {}", num);
+                    return num;
+                }
+            }
+        }
+    }
+    
+    // Method 2: Try to extract from path segments
+    let segments: Vec<&str> = path.split('/').collect();
+    println!("Path segments: {:?}", segments);
+    
+    // Look for a number in the path segments (skip empty, main.rs, api)
+    for segment in segments.iter().rev() {
+        if !segment.is_empty() && *segment != "main.rs" && *segment != "api" && *segment != "main" {
+            if let Ok(num) = segment.parse::<u64>() {
+                println!("Found number in path: {}", num);
+                return num;
+            }
+        }
+    }
+    
+    // Method 3: Try to extract number from the end of the path
+    if let Some(last_part) = path.split('/').last() {
+        if let Ok(num) = last_part.parse::<u64>() {
+            println!("Found number at end of path: {}", num);
+            return num;
+        }
+    }
+    
+    println!("No number found, using default: 10");
+    10 // Default fallback
 }
 
 fn calculate_fibonacci(n: u64) -> BigUint {
