@@ -41,7 +41,7 @@ A blazing-fast, serverless Fibonacci calculator built in Rust and deployed on Ve
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone <https://github.com/Prosper-ador/my-rs-vercel-api.git>
    cd my-rs-vercel-api
    ```
 
