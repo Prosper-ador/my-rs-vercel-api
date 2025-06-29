@@ -51,31 +51,31 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
 
 fn extract_fibonacci_number(path: &str, query: &str) -> u64 {
     // Method 1: Try query parameter first (most reliable)
-    if !query.is_empty() {
-        let params: Vec<&str> = query.split('&').collect();
-        for param in params {
-            if param.starts_with("n=") {
-                if let Ok(num) = param[2..].parse::<u64>() {
-                    println!("Found number in query: {}", num);
-                    return num;
-                }
-            }
-        }
-    }
+    // if !query.is_empty() {
+    //     let params: Vec<&str> = query.split('&').collect();
+    //     for param in params {
+    //         if param.starts_with("n=") {
+    //             if let Ok(num) = param[2..].parse::<u64>() {
+    //                 println!("Found number in query: {}", num);
+    //                 return num;
+    //             }
+    //         }
+    //     }
+    // }
     
-    // Method 2: Try to extract from path segments
-    let segments: Vec<&str> = path.split('/').collect();
-    println!("Path segments: {:?}", segments);
+    // // Method 2: Try to extract from path segments
+    // let segments: Vec<&str> = path.split('/').collect();
+    // println!("Path segments: {:?}", segments);
     
-    // Look for a number in the path segments (skip empty, main.rs, api)
-    for segment in segments.iter().rev() {
-        if !segment.is_empty() && *segment != "main.rs" && *segment != "api" && *segment != "main" {
-            if let Ok(num) = segment.parse::<u64>() {
-                println!("Found number in path: {}", num);
-                return num;
-            }
-        }
-    }
+    // // Look for a number in the path segments (skip empty, main.rs, api)
+    // for segment in segments.iter().rev() {
+    //     if !segment.is_empty() && *segment != "main.rs" && *segment != "api" && *segment != "main" {
+    //         if let Ok(num) = segment.parse::<u64>() {
+    //             println!("Found number in path: {}", num);
+    //             return num;
+    //         }
+    //     }
+    // }
     
     // Method 3: Try to extract number from the end of the path
     if let Some(last_part) = path.split('/').last() {
