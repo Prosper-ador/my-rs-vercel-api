@@ -22,7 +22,7 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
     println!("Extracted number: {}", n);
     
     // Limit to prevent excessive computation
-    let n = n.min(100);
+    let n = n.min(1000);
     
     let fibonacci_result = calculate_fibonacci(n);
     
